@@ -1,0 +1,10 @@
+.vscode
+build
+bin
+cert
+*.DS_STORE
+**.sqlite
+**.pdf
+**.pyc
+
+**.bak
