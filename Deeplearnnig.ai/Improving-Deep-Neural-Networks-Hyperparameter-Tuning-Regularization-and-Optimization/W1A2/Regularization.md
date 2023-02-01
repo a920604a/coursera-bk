@@ -264,9 +264,7 @@ def compute_cost_with_regularization(A3, Y, parameters, lambd):
     #(≈ 1 lines of code)
     # L2_regularization_cost = 
     # YOUR CODE STARTS HERE
-    L2_regularization_cost = lambd * (np.sum(np.square(W1)) + np.sum(np.square(W2)) + np.sum(np.square(W3))) / (2 * m)
-
-    
+    L2_regularization_cost = (1/m)*(lambd/2)*(np.sum(np.square(W1)) + np.sum(np.square(W2)) + np.sum(np.square(W3)))
     
     # YOUR CODE ENDS HERE
     
@@ -317,9 +315,9 @@ def backward_propagation_with_regularization(X, Y, cache, lambd):
     
     dZ3 = A3 - Y
     #(≈ 1 lines of code)
-    dW3 = 1./m * np.dot(dZ3, A2.T) + (lambd * W3) / m
+    # dW3 = 1./m * np.dot(dZ3, A2.T) + None
     # YOUR CODE STARTS HERE
-    
+    dW3 = 1./m * np.dot(dZ3, A2.T) +  (lambd * W3) / m
     
     # YOUR CODE ENDS HERE
     db3 = 1. / m * np.sum(dZ3, axis=1, keepdims=True)
@@ -327,9 +325,9 @@ def backward_propagation_with_regularization(X, Y, cache, lambd):
     dA2 = np.dot(W3.T, dZ3)
     dZ2 = np.multiply(dA2, np.int64(A2 > 0))
     #(≈ 1 lines of code)
-    dW2 = 1./m * np.dot(dZ2, A1.T) + (lambd * W2) / m
+    # dW2 = 1./m * np.dot(dZ2, A1.T) + None
     # YOUR CODE STARTS HERE
-    
+    dW2 = 1./m * np.dot(dZ2, A1.T) + (lambd * W2) / m
     
     # YOUR CODE ENDS HERE
     db2 = 1. / m * np.sum(dZ2, axis=1, keepdims=True)
@@ -337,9 +335,9 @@ def backward_propagation_with_regularization(X, Y, cache, lambd):
     dA1 = np.dot(W2.T, dZ2)
     dZ1 = np.multiply(dA1, np.int64(A1 > 0))
     #(≈ 1 lines of code)
-    dW1 = 1./m * np.dot(dZ1, X.T) + (lambd * W1) / m
+    # dW1 = 1./m * np.dot(dZ1, X.T) + None
     # YOUR CODE STARTS HERE
-    
+    dW1 = 1./m * np.dot(dZ1, X.T) + (lambd * W1) / m
     
     # YOUR CODE ENDS HERE
     db1 = 1. / m * np.sum(dZ1, axis=1, keepdims=True)
@@ -541,18 +539,29 @@ def forward_propagation_with_dropout(X, parameters, keep_prob = 0.5):
     Z1 = np.dot(W1, X) + b1
     A1 = relu(Z1)
     #(≈ 4 lines of code)         # Steps 1-4 below correspond to the Steps 1-4 described above. 
-    D1 = np.random.rand(A1.shape[0], A1.shape[1])     # Step 1: initialize matrix D1 = np.random.rand(..., ...)
+    # D1 =                                           # Step 1: initialize matrix D1 = np.random.rand(..., ...)
+    # D1 =                                           # Step 2: convert entries of D1 to 0 or 1 (using keep_prob as the threshold)
+    # A1 =                                           # Step 3: shut down some neurons of A1
+    # A1 =                                           # Step 4: scale the value of neurons that haven't been shut down
+    # YOUR CODE STARTS HERE
+    D1 = np.random.rand(A1.shape[0], A1.shape[1])  # Step 1: initialize matrix D1 = np.random.rand(..., ...)
     D1 = D1 < keep_prob                            # Step 2: convert entries of D1 to 0 or 1 (using keep_prob as the threshold)
-    A1 = A1 * D1                                      # Step 3: shut down some neurons of A1
-    A1 = A1 / keep_prob                               # Step 4: scale the value of neurons that haven't been shut down
-    ### END CODE HERE ###
+    A1 = A1 * D1                                   # Step 3: shut down some neurons of A1
+    A1 = A1 / keep_prob                            # Step 4: scale the value of neurons that haven't been shut down
+    
+    # YOUR CODE ENDS HERE
     Z2 = np.dot(W2, A1) + b2
     A2 = relu(Z2)
-    ### START CODE HERE ### (approx. 4 lines)
-    D2 = np.random.rand(A2.shape[0], A2.shape[1])     # Step 1: initialize matrix D2 = np.random.rand(..., ...)
-    D2 = D2 < keep_prob                           # Step 2: convert entries of D2 to 0 or 1 (using keep_prob as the threshold)                           
-    A2 = A2 * D2                                      # Step 3: shut down some neurons of A2
-    A2 = A2 / keep_prob  
+    #(≈ 4 lines of code)
+    # D2 =                                           # Step 1: initialize matrix D2 = np.random.rand(..., ...)
+    # D2 =                                           # Step 2: convert entries of D2 to 0 or 1 (using keep_prob as the threshold)
+    # A2 =                                           # Step 3: shut down some neurons of A2
+    # A2 =                                           # Step 4: scale the value of neurons that haven't been shut down
+    # YOUR CODE STARTS HERE
+    D2 = np.random.rand(A2.shape[0], A2.shape[1])  # Step 1: initialize matrix D2 = np.random.rand(..., ...)
+    D2 = D2 < keep_prob                            # Step 2: convert entries of D2 to 0 or 1 (using keep_prob as the threshold)
+    A2 = A2 * D2                                   # Step 3: shut down some neurons of A2
+    A2 = A2 / keep_prob                            # Step 4: scale the value of neurons that haven't been shut down
     
     # YOUR CODE ENDS HERE
     Z3 = np.dot(W3, A2) + b3
@@ -616,9 +625,11 @@ def backward_propagation_with_dropout(X, Y, cache, keep_prob):
     db3 = 1./m * np.sum(dZ3, axis=1, keepdims=True)
     dA2 = np.dot(W3.T, dZ3)
     #(≈ 2 lines of code)
-    dA2 =  dA2 * D2         # Step 1: Apply mask D2 to shut down the same neurons as during the forward propagation
-    dA2 =  dA2 / keep_prob  # Step 2: Scale the value of neurons that haven't been shut down
+    # dA2 =                # Step 1: Apply mask D2 to shut down the same neurons as during the forward propagation
+    # dA2 =                # Step 2: Scale the value of neurons that haven't been shut down
     # YOUR CODE STARTS HERE
+    dA2 = dA2 * D2         # Step 1: Apply mask D2 to shut down the same neurons as during the forward propagation
+    dA2 = dA2 / keep_prob  # Step 2: Scale the value of neurons that haven't been shut down
     
     
     # YOUR CODE ENDS HERE
@@ -628,10 +639,11 @@ def backward_propagation_with_dropout(X, Y, cache, keep_prob):
     
     dA1 = np.dot(W2.T, dZ2)
     #(≈ 2 lines of code)
-    dA1 =  dA1 * D1         # Step 1: Apply mask D1 to shut down the same neurons as during the forward propagation
-    dA1 =  dA1 / keep_prob  # Step 2: Scale the value of neurons that haven't been shut down
+    # dA1 =                # Step 1: Apply mask D1 to shut down the same neurons as during the forward propagation
+    # dA1 =                # Step 2: Scale the value of neurons that haven't been shut down
     # YOUR CODE STARTS HERE
-    
+    dA1 = dA1 * D1         # Step 1: Apply mask D1 to shut down the same neurons as during the forward propagation
+    dA1 = dA1 / keep_prob  # Step 2: Scale the value of neurons that haven't been shut down
     
     # YOUR CODE ENDS HERE
     dZ1 = np.multiply(dA1, np.int64(A1 > 0))
@@ -715,7 +727,7 @@ plot_decision_boundary(lambda x: predict_dec(parameters, x.T), train_X, train_Y)
 
 **Note**:
 - A **common mistake** when using dropout is to use it both in training and testing. You should use dropout (randomly eliminate nodes) only in training. 
-- Deep learning frameworks like [tensorflow](https://www.tensorflow.org/api_docs/python/tf/nn/dropout), [PaddlePaddle](http://doc.paddlepaddle.org/release_doc/0.9.0/doc/ui/api/trainer_config_helpers/attrs.html), [keras](https://keras.io/layers/core/#dropout) or [caffe](http://caffe.berkeleyvision.org/tutorial/layers/dropout.html) come with a dropout layer implementation. Don't stress - you will soon learn some of these frameworks.
+- Deep learning frameworks like [TensorFlow](https://www.tensorflow.org/api_docs/python/tf/nn/dropout), [PaddlePaddle](https://www.paddlepaddle.org.cn/documentation/docs/en/api/paddle/nn/Dropout_en.html#dropout), [Keras](https://keras.io/api/layers/regularization_layers/dropout/) or [caffe](https://caffe.berkeleyvision.org/doxygen/classcaffe_1_1DropoutLayer.html) come with a dropout layer implementation. Don't stress - you will soon learn some of these frameworks.
 
 <font color='blue'>
     
