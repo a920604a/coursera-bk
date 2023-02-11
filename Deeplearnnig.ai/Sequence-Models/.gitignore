@@ -11,3 +11,6 @@ W[1-9]A[1-9]*/*/**.npy
 W[1-9]A[1-9]*/results/runs/*/events.out*
 W[1-9]A[1-9]*/results/runs/*/*/events.out*
 W4A1/keras-facenet*
+W4A3_UGL/data
+W4A3_UGL/model
+W4A4_UGL_POS/glove
