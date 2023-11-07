@@ -1,0 +1,60 @@
+version: '3'
+services:
+  my-mysql:
+    image: mysql:latest
+    restart: "always"
+    container_name: my-mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: coffee_shop_products
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: "always"
+    container_name: my-phpmyadmin-container
+    environment:
+      PMA_HOST: my-mysql
+      # PMA_USER: admin
+      # PMA_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - my-mysql
+      
+  postgres:
+    image: postgres:latest
+    restart: "always"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: coffee
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: "always"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: a920604a@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SESSION_EXPIRATION_TIME: 3650
+      PGADMIN_CONFIG_MAX_SESSION_IDLE_TIME: 60
+    volumes:
+        - pgadmin4-data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+  
+volumes:
+  mysql_data:
+  postgresql_data:
+  pgadmin4-data:
